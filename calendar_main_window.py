@@ -6,7 +6,12 @@
 #
 # WARNING! All changes made in this file will be lost!
 
+import sqlite3
+import sys
+
 from PyQt5 import QtCore, QtGui, QtWidgets
+
+from plan_dialog import Ui_Dialog
 
 
 class Ui_MainWindow(object):
@@ -34,16 +39,48 @@ class Ui_MainWindow(object):
 
         self.go_to_plan_btn.clicked.connect(self.go_to_plan)
 
+
+        self.connect_to_database()
+
         self.verticalLayout.addWidget(self.go_to_plan_btn)
         MainWindow.setCentralWidget(self.centralwidget)
         self.retranslateUi(MainWindow)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
-    def go_to_plan(self, MainWindow):
-        print(self.calendar.selectedDate().toPyDate())
+    def go_to_plan(self):
+        # self.calendar.selectedDate().toPyDate()
+        fselected_date = f"{self.calendar.selectedDate().day()}" \
+                         f".{self.calendar.selectedDate().month()}" \
+                         f".{self.calendar.selectedDate().year()}"
+        print(fselected_date)
+        Dialog = QtWidgets.QDialog()
+        ui = Ui_Dialog()
+        ui.setupUi(Dialog, self.calendar.selectedDate())
+        Dialog.show()
+        Dialog.exec_()
+
+    def connect_to_database(self):
+        cur = sqlite3.connect("organizer.db").cursor()
+        cur.execute('''CREATE TABLE IF NOT EXISTS plans (
+                                                    date text NOT NULL,
+                                                    createTime text NOT NULL,
+                                                    title text NOT NULL,
+                                                    deadline text NOT NULL,
+                                                    done int NOT NULL,
+                                                    description text
+                                                    );''')
+
 
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
-        MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow"))
+        MainWindow.setWindowTitle(_translate("MainWindow", "MyOrganizer"))
         self.go_to_plan_btn.setText(_translate("MainWindow", "Добавить/посмотреть план"))
 
+
+if __name__ == '__main__':
+    app = QtWidgets.QApplication(sys.argv)
+    MainWindow = QtWidgets.QMainWindow()
+    ui = Ui_MainWindow()
+    ui.setupUi(MainWindow)
+    MainWindow.show()
+    sys.exit(app.exec())
