@@ -11,6 +11,7 @@ import sys
 
 from PyQt5 import QtCore, QtGui, QtWidgets
 
+
 from plan_dialog import Ui_Dialog
 
 
@@ -48,11 +49,9 @@ class Ui_MainWindow(object):
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
     def go_to_plan(self):
-        # self.calendar.selectedDate().toPyDate()
         fselected_date = f"{self.calendar.selectedDate().day()}" \
                          f".{self.calendar.selectedDate().month()}" \
                          f".{self.calendar.selectedDate().year()}"
-        print(fselected_date)
         Dialog = QtWidgets.QDialog()
         ui = Ui_Dialog()
         ui.setupUi(Dialog, self.calendar.selectedDate())
@@ -60,15 +59,18 @@ class Ui_MainWindow(object):
         Dialog.exec_()
 
     def connect_to_database(self):
-        cur = sqlite3.connect("organizer.db").cursor()
+        conn = sqlite3.connect("organizer.db")
+        cur = conn.cursor()
         cur.execute('''CREATE TABLE IF NOT EXISTS plans (
                                                     date text NOT NULL,
                                                     createTime text NOT NULL,
                                                     title text NOT NULL,
                                                     deadline text NOT NULL,
-                                                    done int NOT NULL,
-                                                    description text
+                                                    description text,
+                                                    done integer NOT NULL
                                                     );''')
+        conn.commit()
+        conn.close()
 
 
     def retranslateUi(self, MainWindow):

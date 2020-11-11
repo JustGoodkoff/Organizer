@@ -63,8 +63,6 @@ class Ui_Dialog(object):
 
 
     def go_to_create_plan(self):
-        print(1)
-
         Dialog = QtWidgets.QDialog()
         ui = Ui_Create_Dialog()
         ui.setupUi(Dialog, self.selected_date)
