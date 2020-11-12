@@ -20,12 +20,11 @@ class Ui_Create_Dialog(object):
         self.Dialog.setObjectName("Dialog")
         self.Dialog.resize(284, 405)
         self.Dialog.setMinimumSize(QtCore.QSize(284, 405))
+        self.Dialog.setWindowIcon(QtGui.QIcon("calendar.png"))
         font = QtGui.QFont()
         font.setPointSize(12)
         self.Dialog.setFont(font)
-
         self.selected_date = selected_date
-
         self.verticalLayout_5 = QtWidgets.QVBoxLayout(self.Dialog)
         self.verticalLayout_5.setObjectName("verticalLayout_5")
         self.verticalLayout_4 = QtWidgets.QVBoxLayout()
@@ -43,7 +42,6 @@ class Ui_Create_Dialog(object):
         font.setPointSize(9)
         self.title_line_edit.setFont(font)
         self.title_line_edit.setText("")
-
         self.title_line_edit.setObjectName("lineEdit")
         self.verticalLayout.addWidget(self.title_line_edit)
         self.verticalLayout_2 = QtWidgets.QVBoxLayout()
@@ -83,7 +81,6 @@ class Ui_Create_Dialog(object):
         self.save_btn.setObjectName("pushButton")
         self.save_btn.clicked.connect(self.save_plan)
         self.verticalLayout_5.addWidget(self.save_btn)
-
         self.retranslateUi(self.Dialog)
         QtCore.QMetaObject.connectSlotsByName(self.Dialog)
 
@@ -100,15 +97,15 @@ class Ui_Create_Dialog(object):
                                                                        self.create_time,
                                                                        self.title_line_edit.text(),
                                                                        self.deadline_dateTime_edit.text(),
-                                                                       str(self.description_text_edit.toPlainText()),
+                                                                       str(self.description_text_edit.toPlainText())
+                                                                       + "\n",
                                                                        0))
                 QtWidgets.QDialog.close(self.Dialog)
                 msg = QMessageBox()
-                msg.setIcon(QMessageBox.Information)
+                msg.setWindowIcon(QtGui.QIcon('inf.png'))
                 msg.setText('План добавлен')
                 msg.setWindowTitle("Success")
                 msg.exec_()
-
             except Exception:
                 msg = QMessageBox()
                 msg.setIcon(QMessageBox.Critical)
@@ -128,7 +125,7 @@ class Ui_Create_Dialog(object):
 
     def retranslateUi(self, Dialog):
         _translate = QtCore.QCoreApplication.translate
-        self.Dialog.setWindowTitle(_translate("Dialog", "Dialog"))
+        self.Dialog.setWindowTitle(_translate("Dialog", "Create plan"))
         self.label.setText(_translate("Dialog", "Название"))
         self.label_2.setText(_translate("Dialog", "Дедлайн"))
         self.label_3.setText(_translate("Dialog", "Описание"))

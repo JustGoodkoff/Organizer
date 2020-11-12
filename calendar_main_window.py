@@ -11,7 +11,6 @@ import sys
 
 from PyQt5 import QtCore, QtGui, QtWidgets
 
-
 from plan_dialog import Ui_Dialog
 
 
@@ -19,6 +18,7 @@ class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
         MainWindow.resize(413, 300)
+        MainWindow.setWindowIcon(QtGui.QIcon("calendar.png"))
         MainWindow.setMinimumSize(QtCore.QSize(413, 300))
         MainWindow.setSizeIncrement(QtCore.QSize(0, 0))
         MainWindow.setMouseTracking(False)
@@ -37,21 +37,14 @@ class Ui_MainWindow(object):
         self.verticalLayout.addWidget(self.calendar)
         self.go_to_plan_btn = QtWidgets.QPushButton(self.centralwidget)
         self.go_to_plan_btn.setObjectName("go_to_plan_btn")
-
         self.go_to_plan_btn.clicked.connect(self.go_to_plan)
-
-
         self.connect_to_database()
-
         self.verticalLayout.addWidget(self.go_to_plan_btn)
         MainWindow.setCentralWidget(self.centralwidget)
         self.retranslateUi(MainWindow)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
     def go_to_plan(self):
-        fselected_date = f"{self.calendar.selectedDate().day()}" \
-                         f".{self.calendar.selectedDate().month()}" \
-                         f".{self.calendar.selectedDate().year()}"
         Dialog = QtWidgets.QDialog()
         ui = Ui_Dialog()
         ui.setupUi(Dialog, self.calendar.selectedDate())
@@ -71,7 +64,6 @@ class Ui_MainWindow(object):
                                                     );''')
         conn.commit()
         conn.close()
-
 
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
