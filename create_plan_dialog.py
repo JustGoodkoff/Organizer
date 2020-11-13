@@ -97,8 +97,7 @@ class Ui_Create_Dialog(object):
                                                                        self.create_time,
                                                                        self.title_line_edit.text(),
                                                                        self.deadline_dateTime_edit.text(),
-                                                                       str(self.description_text_edit.toPlainText())
-                                                                       + "\n",
+                                                                       str(self.description_text_edit.toPlainText()),
                                                                        0))
                 QtWidgets.QDialog.close(self.Dialog)
                 msg = QMessageBox()

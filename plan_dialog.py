@@ -39,6 +39,10 @@ class Ui_Dialog(object):
         self.label.setObjectName("label")
         self.label.setText(fselected_date)
         self.gridLayout.addWidget(self.label, 0, 1, 1, 1)
+        self.save_chandes_btn = QtWidgets.QPushButton(Dialog)
+        self.save_chandes_btn.setObjectName("save_chandes_btn")
+        self.save_chandes_btn.clicked.connect(self.save_update)
+        self.gridLayout.addWidget(self.save_chandes_btn, 3, 0, 1, 1)
         self.comboBox = QtWidgets.QComboBox(Dialog)
         self.comboBox.setObjectName("comboBox")
         self.comboBox.addItem("")
@@ -54,7 +58,7 @@ class Ui_Dialog(object):
         cur = conn.cursor()
         self.data = cur.execute("SELECT * FROM plans WHERE date=?", (self.selected_date.toPyDate(),)).fetchall()
         self.add_data_to_list_widget(self.data)
-        cur.close()
+        conn.close()
         self.retranslateUi(Dialog)
         QtCore.QMetaObject.connectSlotsByName(Dialog)
 
@@ -76,16 +80,37 @@ class Ui_Dialog(object):
             self.data = list(sorted(self.data, key=lambda x: self.format_date(x[3]), reverse=True))
             self.add_data_to_list_widget(self.data)
 
+    def save_update(self):
+        conn = sqlite3.connect("organizer.db")
+        cur = conn.cursor()
+        for index in range(self.listWidget.count()):
+            if self.listWidget.item(index).checkState() == QtCore.Qt.Checked:
+                cur.execute("UPDATE plans SET done=? WHERE createTime=?", (1, self.listWidget.item(index).data(1)))
+            else:
+                cur.execute("UPDATE plans SET done=? WHERE createTime=?", (0, self.listWidget.item(index).data(1)))
+        conn.commit()
+        conn.close()
+
     def format_date(self, date):
         date = date.split()
         date = ".".join(list(reversed(date[0].split(".")))) + date[1]
         return date
 
     def add_data_to_list_widget(self, data):
+        color1, color2 = QtGui.QColor.fromRgb(230, 230, 230), QtGui.QColor.fromRgb(255, 255, 255)
         for d in data:
-            self.listWidget.addItem("Дедлайн: " + d[3]
-                                    + "\n" + "Название: " + d[2]
-                                    + "\n" + "Описание: " + d[4])
+            item = QtWidgets.QListWidgetItem()
+            item.setText("Дедлайн: " + d[3]
+                         + "\n" + "Название: " + d[2]
+                         + "\n" + "Описание: " + d[4])
+            if d[5] == 0:
+                item.setCheckState(QtCore.Qt.Unchecked)
+            else:
+                item.setCheckState(QtCore.Qt.Checked)
+            item.setBackground(color1)
+            item.setData(1, d[1])
+            color1, color2 = color2, color1
+            self.listWidget.addItem(item)
 
     def go_to_create_plan(self):
         Dialog = QtWidgets.QDialog()
@@ -98,6 +123,7 @@ class Ui_Dialog(object):
         _translate = QtCore.QCoreApplication.translate
         Dialog.setWindowTitle(_translate("Dialog", "Plan"))
         self.go_to_create_plan_btn.setText(_translate("Dialog", "+"))
+        self.save_chandes_btn.setText(_translate("Dialog", "Сохранить изменения"))
         self.comboBox.setItemText(0, _translate("Dialog", "Сортировка по времени создания ↑"))
         self.comboBox.setItemText(1, _translate("Dialog", "Сортировка по времени создания ↓"))
         self.comboBox.setItemText(2, _translate("Dialog", "Сортировка по дедлайну ↑"))
